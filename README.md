@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Edge Enhanced Implicit Orientation Learning with Geometric Prior for 6D Pose Estimation
 
 Yilin Wen, Hao Pan, Lei Yang, Wenping Wang
