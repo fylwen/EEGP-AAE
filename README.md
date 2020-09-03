@@ -1,7 +1,5 @@
 # Edge Enhanced Implicit Orientation Learning with Geometric Prior for 6D Pose Estimation
 
-Yilin Wen, Hao Pan, Lei Yang, Wenping Wang
-
 Original implementation of the paper Yilin Wen, Hao Pan, Lei Yang and Wenping Wang, "Edge Enhanced Implicit Orientation Learning With Geometric Prior for 6D Pose Estimation", RAL, 2020, https://ieeexplore.ieee.org/document/9126189. 
 
 This work improves the Augmented AutoEncoder(https://github.com/DLR-RM/AugmentedAutoencoder) with a self-supervised scheme with the geometric prior imposed on the implicit orientation learning and a combination of color cue with the edge cue.
