@@ -36,10 +36,10 @@ def generate_scene_crops(test_imgs, test_depth_imgs, bboxes,pad_factor=1.2,W_AE=
                 x, y, w, h = bb
 
                 size = int(np.maximum(h, w) * pad_factor)
-                left = int(np.max([x + w / 2 - size / 2, 0]))
-                right = int(np.min([x + w / 2 + size / 2, W]))
-                top = int(np.max([y + h / 2 - size / 2, 0]))
-                bottom = int(np.min([y + h / 2 + size / 2, H]))
+                left = int(np.max([x + w // 2 - size // 2, 0]))
+                right = int(np.min([x + w // 2 + size // 2, W]))
+                top = int(np.max([y + h // 2 - size // 2, 0]))
+                bottom = int(np.min([y + h // 2 + size // 2, H]))
 
                 crop = img[top:bottom, left:right].copy()
                 # print 'Original Crop Size: ', crop.shape
@@ -95,10 +95,10 @@ def extract_square_patch(scene_img, bb_xywh, pad_factor, resize=(128, 128), inte
     x, y, w, h = np.array(bb_xywh).astype(np.int32)
     size = int(np.maximum(h, w) * pad_factor)
 
-    left = int(np.maximum(x + w / 2 - size / 2, 0))
-    right = int(np.minimum(x + w / 2 + size / 2, scene_img.shape[1]))
-    top = int(np.maximum(y + h / 2 - size / 2, 0))
-    bottom = int(np.minimum(y + h / 2 + size / 2, scene_img.shape[0]))
+    left = int(np.maximum(x + w // 2 - size // 2, 0))
+    right = int(np.minimum(x + w // 2 + size // 2, scene_img.shape[1]))
+    top = int(np.maximum(y + h // 2 - size // 2, 0))
+    bottom = int(np.minimum(y + h // 2 + size // 2, scene_img.shape[0]))
 
     scene_crop = scene_img[top:bottom, left:right]
     resized_scene_crop = cv2.resize(scene_crop, resize, interpolation=interpolation)

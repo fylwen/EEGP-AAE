@@ -234,8 +234,8 @@ def pose_estimation_img_detection(sess, x, pose_retrieved, img_bgr, img_depth, i
         center_obj_x_train = render_bb[0] + render_bb[2] / 2. - K_train[0, 2]
         center_obj_y_train = render_bb[1] + render_bb[3] / 2. - K_train[1, 2]
 
-        center_obj_x_test = est_bb[0] + est_bb[2] / 2 - K_test[0, 2]
-        center_obj_y_test = est_bb[1] + est_bb[3] / 2 - K_test[1, 2]
+        center_obj_x_test = est_bb[0] + est_bb[2] // 2 - K_test[0, 2]
+        center_obj_y_test = est_bb[1] + est_bb[3] // 2 - K_test[1, 2]
 
 
         cur_info_pose_est['est_tra'] = est_tra_w_tz(mm_tz,Radius_render_train,K_test,center_obj_x_test,center_obj_y_test,

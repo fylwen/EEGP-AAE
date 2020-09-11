@@ -229,10 +229,10 @@ with sess_estpose.as_default():
         x,y,w,h=obj_bb
         H,W,_=img_bgr.shape
         size = int(np.maximum(h, w) * 1.2)
-        left = int(np.max([x + w / 2 - size / 2, 0]))
-        right = int(np.min([x + w / 2 + size / 2, W]))
-        top = int(np.max([y + h / 2 - size / 2, 0]))
-        bottom = int(np.min([y + h / 2 + size / 2, H]))
+        left = int(np.max([x + w // 2 - size // 2, 0]))
+        right = int(np.min([x + w // 2 + size // 2, W]))
+        top = int(np.max([y + h // 2 - size // 2, 0]))
+        bottom = int(np.min([y + h // 2 + size // 2, H]))
 
         crop = img_bgr[top:bottom, left:right].copy()
         query_bgr = cv2.resize(crop, (image_size,image_size))
@@ -270,8 +270,8 @@ with sess_estpose.as_default():
         center_obj_x_train = render_bb[0] + render_bb[2] / 2. - K_train[0, 2]
         center_obj_y_train = render_bb[1] + render_bb[3] / 2. - K_train[1, 2]
 
-        center_obj_x_test = est_bb[0] + est_bb[2] / 2 - K_test[0, 2]
-        center_obj_y_test = est_bb[1] + est_bb[3] / 2 - K_test[1, 2]
+        center_obj_x_test = est_bb[0] + est_bb[2] // 2 - K_test[0, 2]
+        center_obj_y_test = est_bb[1] + est_bb[3] // 2 - K_test[1, 2]
 
         center_obj_mm_tx = center_obj_x_test * mm_tz / K_test[0, 0] \
                            - center_obj_x_train * Radius_render_train / K_train[0, 0]
