@@ -85,7 +85,7 @@ class Decoder(snt.AbstractModule):
         z=latent_code
         h, w, c = self._reconstruction_shape[0:3]
         print(h,w,c)
-        layer_dimensions = [ [h/np.prod(self._strides[i:]), w/np.prod(self._strides[i:])]  for i in xrange(len(self._strides))]
+        layer_dimensions = [ [h//np.prod(self._strides[i:]), w//np.prod(self._strides[i:])]  for i in range(0,len(self._strides))]#py2 to py3
         print(layer_dimensions)
 
         if c!=1:

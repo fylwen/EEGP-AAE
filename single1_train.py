@@ -167,7 +167,7 @@ with tf.variable_scope(experiment_name):#.split('_')[0] + '_' + experiment_name.
             y_gt_flat,
             reduction=tf.losses.Reduction.NONE
         )
-        l2_val_ae, _ = tf.nn.top_k(l2_ae, k=l2_ae.shape[1] / bootstrap_ratio)
+        l2_val_ae, _ = tf.nn.top_k(l2_ae, k=l2_ae.shape[1] // bootstrap_ratio) #py2 to py3
         recon_error_ae_bgr = tf.reduce_mean(l2_val_ae)
 
         weight_bgr_loss=1.

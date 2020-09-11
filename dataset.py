@@ -7,8 +7,8 @@ import cv2
 import random
 import copy
 
-from pysixd_stuff import transform
-from pysixd_stuff import view_sampler
+from pysixd_stuff.pysixd import transform
+from pysixd_stuff.pysixd import view_sampler
 from utils import lazy_property
 
 verbose=False
