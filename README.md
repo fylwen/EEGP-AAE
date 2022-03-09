@@ -44,7 +44,7 @@ keras 2.2.5 (For Retina-Net)
 ### Pretrained Model
 
 To run the demos of our pipeline, we provide pretrained ckpt files for T-LESS obj-29 and LINEMOD obj-14, and their corresponding pose embedding \bar_C for the inference stage in the following link:
-https://drive.google.com/drive/folders/1u7UDpiXnS73LFEOfSxf9vvFTHstVwy8G?usp=sharing
+https://drive.google.com/drive/folders/1p6bImqLeRwymXVCyQqWF_6ktQqshJaYR?usp=sharing
 
 You may keep the downloaded folders under the root directory of this git repository:
 
