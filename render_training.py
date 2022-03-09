@@ -112,9 +112,9 @@ class Model(object):
 
             R = transform.random_rotation_matrix()[:3, :3]
             im_size = (render_dims[0], render_dims[1])
-            rgb_x, depth_x = renderer_vt.render_phong(model, im_size, K.copy(), R, t, clip_near=clip_near,
+            rgb_x, depth_x = renderer_vt.render_phong(model, im_size, K.copy(), R, t,clip_near=clip_near,
                                                   clip_far=clip_far,texture=texture_img, mode='rgb+depth', random_light=True)
-            rgb_y, depth_y = renderer_vt.render_phong(model, im_size, K.copy(), R, t, clip_near=clip_near,
+            rgb_y, depth_y = renderer_vt.render_phong(model, im_size, K.copy(), R, t,clip_near=clip_near,
                                                   clip_far=clip_far,texture=texture_img, mode='rgb+depth', random_light=False)
 
 

@@ -14,7 +14,7 @@ import numpy as np
 import tensorflow as tf
 import sonnet as snt
 import open3d as o3d
-from pysixd_stuff.pysixd import inout
+from pysixd_stuff.pysixd import inout, pose_error
 from est_utils import est_tra_w_tz,rectify_rot,depth_refinement,rotation_error_icp
 obj_id=14
 num_iterations=30000
@@ -249,7 +249,7 @@ with sess_estpose.as_default():
         est_rot=rectify_rot(est_rot_cb,est_tra)
 
         #Further icp refinement for rotation and translation
-        if True:
+        if False:
             est_rot,est_tra,_= rotation_error_icp(img_depth, model_o3d,  obj_bb, est_rot, est_tra.flatten(),K_test.copy(),
                                                 width=W, height=H, max_mean_dist=max_mean_dist,
                                                 max_mean_dist_factor=max_mean_dist_factor,
