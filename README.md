@@ -1,8 +1,8 @@
 # Edge Enhanced Implicit Orientation Learning with Geometric Prior for 6D Pose Estimation
 
-Original implementation of the paper Yilin Wen, Hao Pan, Lei Yang and Wenping Wang, "Edge Enhanced Implicit Orientation Learning With Geometric Prior for 6D Pose Estimation", RAL, 2020, https://ieeexplore.ieee.org/document/9126189. 
+Original implementation of the paper Yilin Wen, Hao Pan, Lei Yang and Wenping Wang, "Edge Enhanced Implicit Orientation Learning With Geometric Prior for 6D Pose Estimation", RAL, 2020, [[Paper]](https://ieeexplore.ieee.org/document/9126189).
 
-This work improves the Augmented AutoEncoder(https://github.com/DLR-RM/AugmentedAutoencoder) with a self-supervised scheme with the geometric prior imposed on the implicit orientation learning and a combination of color cue with the edge cue.
+This work improves the [Augmented AutoEncoder](https://github.com/DLR-RM/AugmentedAutoencoder) with a self-supervised scheme with the geometric prior imposed on the implicit orientation learning and a combination of color cue with the edge cue.
 
 ## Citiation
 If you have interest with this work, please consider citing
@@ -43,8 +43,7 @@ keras 2.2.5 (For Retina-Net)
 
 ### Pretrained Model
 
-To run the demos of our pipeline, we provide pretrained ckpt files for T-LESS obj-29 and LINEMOD obj-14, and their corresponding pose embedding \bar_C for the inference stage in the following link:
-https://drive.google.com/drive/folders/1p6bImqLeRwymXVCyQqWF_6ktQqshJaYR?usp=sharing
+To run the demos of our pipeline, we provide pretrained ckpt files for T-LESS obj-29 and LINEMOD obj-14, and their corresponding pose embedding \bar_C for the inference stage in the following link [[Inference Data]](https://connecthkuhk-my.sharepoint.com/:f:/g/personal/ylwen_connect_hku_hk/ElFrmPWhO_RJhxd3RmEUiNkBdwaPcohx04zVrHy0spIrdw?e=Mu24BO)
 
 You may keep the downloaded folders under the root directory of this git repository:
 
@@ -53,7 +52,7 @@ You may keep the downloaded folders under the root directory of this git reposit
 3) ```./embedding92232s/```: Pose embedding \bar_C, 2D bounding boxes and rotations for sampled templates in the inference stage.
 4) ```./demo_data/```: Data for demo images and 2D detections.
 
-For T-LESS, we also provide its 2D detection backbone RetinaNet(https://github.com/fizyr/keras-retinanet), with the pretrianed ckpt file provided by pix2pose(https://github.com/kirumang/Pix2Pose) under the path ```./demo_data/resnet50_tless_19_inf.h5```
+For T-LESS, we also provide its 2D detection backbone [RetinaNet](https://github.com/fizyr/keras-retinanet), with the pretrianed ckpt file provided by [pix2pose](https://github.com/kirumang/Pix2Pose) under the path ```./demo_data/resnet50_tless_19_inf.h5```
 
 
 ## Quick Start:
@@ -75,7 +74,7 @@ Estimate 6D pose for a LINEMOD lamp(obj-14) from an RGB+D image and the Mask-RCN
 
 ### Prepared Training data
 
-The rendering is based on https://github.com/thodan/sixd_toolkit
+The rendering is based on [SIXD Toolkit](https://github.com/thodan/sixd_toolkit)
 
 ##### Render images for training the Auto-Encoder
 
