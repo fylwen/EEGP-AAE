@@ -237,7 +237,7 @@ class Dataset(object):
 
         if self.inshape[-1] != 3:
             edge_x = np.empty((batch_size,) + self.shape[:-1] + (1,), dtype=np.float32)
-            for i in xrange(batch_size):
+            for i in range(0,batch_size):
                 p1 = random.randint(30, 100)  # (50,150)
                 p2 = random.random() * 0.8 + 1.2
                 edge_x[i] = (cv2.Canny(batch_x[i], p1, p1 * p2)).astype(np.float32)[:, :, np.newaxis]
@@ -258,7 +258,7 @@ class Dataset(object):
         weight_y = np.zeros((batch_size,) + self.shape[:-1] + (1,), dtype=np.float32)
         if self.outshape[-1] != 3:
             edge_y = np.empty((batch_size,) + self.shape[:-1] + (1,), dtype=np.float32)
-            for i in xrange(batch_size):
+            for i in range(0,batch_size):
                 edge_y[i] = (cv2.Canny(batch_y[i], 50, 150)).astype(np.float32)[:, :, np.newaxis]
                 cnt_edgey = float(np.count_nonzero(edge_y[i]))
                 weight_y[i] = np.where(edge_y[i] == 0, cnt_edgey / (self.shape[0] * self.shape[1]),

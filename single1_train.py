@@ -24,17 +24,18 @@ import utils as u
 from utils import lazy_property
 from dataset import Dataset
 
-from six.moves import xrange
+
 from network import build_dataset,build_decoder,build_encoder,VectorQuantizerEMA
 
 ################################################################################
 path_workspace = './ws/'
-path_embedding_data = '../../../Edge-Network/embedding20s/'
+path_embedding_data = './embedding20s/'
 name_fg_data='prepared_training_data_{:02d}_subdiv'
+
 
 tau=0.07
 lambda_reconst=250.
-d_ema=0.99
+d_ema=0.9995
 
 # Set hyper-parameters.
 batch_size = 64
@@ -43,7 +44,7 @@ embedding_dim = 128
 
 learning_rate = 2e-4
 num_training_updates = 30000
-normalize_images=True #Default false for T-LESS CAD meshes, and True for texture meshes as LINEMOD meshes
+normalize_images=False #Default false for T-LESS CAD meshes, and True for texture meshes as LINEMOD meshes
 
 if path_workspace == None:
     print('Please define a workspace path:\n')
@@ -74,9 +75,9 @@ cfg_file_path = u.get_config_file_path(path_workspace, experiment_name, experime
 list_models=[int(obj_id)]
 
 log_dir = u.get_log_dir(path_workspace, experiment_name, experiment_group)
-ckpt_dir = os.path.join(log_dir, 'checkpoints_lambda{:d}'.format(int(lambda_reconst)))
+ckpt_dir = os.path.join(log_dir, 'checkpoints')
 checkpoint_file = u.get_checkpoint_basefilename(ckpt_dir)
-train_fig_dir = os.path.join(log_dir, 'train_figures_lambda{:d}'.format(int(lambda_reconst)))
+train_fig_dir = os.path.join(log_dir, 'train_figures')
 dataset_path = u.get_dataset_path(path_workspace)
 print('dataset_path',dataset_path)
 
@@ -110,7 +111,7 @@ dataset.compute_knn_rot_embedding_indices(knn=1, use_probability=False)
 
 num_embeddings = dataset.embedding_size
 # Build modules.
-with tf.variable_scope(experiment_name):#.split('_')[0] + '_' + experiment_name.split('_')[1]):
+with tf.variable_scope('subdiv_f18_softmax_edge'):
     ci=dataset.inshape[-1]
     co=dataset.outshape[-1]
     print('ci/co: ',ci, co)
@@ -202,6 +203,7 @@ with tf.variable_scope(experiment_name):#.split('_')[0] + '_' + experiment_name.
     tf.summary.scalar('pose_ce_loss', pose_train_retr["loss"])
     tf.summary.scalar('pose_cosine_err',pose_cosine_loss)
     tf.summary.scalar('temperature',gprior_temperature)
+    tf.summary.scalar('decay',d_ema)
     tf.summary.scalar('lambda_reconst_cost', gprior_lambda_reconst_cost)
 
     mean, var = tf.nn.moments(pose_embeds.embeddings, 1)
@@ -259,7 +261,7 @@ with tf.Session(config=config) as sess:
     sess.run(tf.global_variables_initializer())
     summary_writer = tf.summary.FileWriter(ckpt_dir, sess.graph)
     bar.start()
-    for i in xrange(num_training_updates):
+    for i in range(0,num_training_updates):
         bar.update(i)
         this_x, this_y, this_ppixel_weight, this_obj_label, this_pose_label, this_pose_img = dataset.batch(batch_size, batchx_clean=use_clean,stack_codebook=False)
         this_x = this_x.astype(np.float32)

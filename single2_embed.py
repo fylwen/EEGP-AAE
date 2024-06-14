@@ -49,7 +49,7 @@ experiment_name = full_name.pop()
 experiment_group = full_name.pop() if len(full_name) > 0 else ''
 
 log_dir = u.get_log_dir(workspace_path, experiment_name, experiment_group)
-ckpt_dir = os.path.join(log_dir, 'checkpoints_lambda250')
+ckpt_dir = log_dir
 checkpoint_file = u.get_checkpoint_basefilename(ckpt_dir)
 print('log_dir',log_dir)
 args = configparser.ConfigParser()
@@ -63,10 +63,10 @@ image_size=128
 ci=4
 path_embedding_data = './embedding92232s/{:02d}'.format(obj_id) #path to dir of info \bar_R
 embedding_size = 92232
-normalize_images=True # Default false for non-textured TLESS CAD mesh, and True for texture meshes such as Linemod
+normalize_images= True # Default false for non-textured TLESS CAD mesh, and True for texture meshes such as Linemod
 
 # Build modules.
-with tf.variable_scope(experiment_name):
+with tf.variable_scope('subdiv_f18_softmax_edge'):
     #################Normalize images###########################
     bgr_y=tf.placeholder(tf.uint8, shape=(image_size, image_size, 3))
     _normalized_bgr_y= tf.reshape(tf.image.per_image_standardization(bgr_y),[image_size,image_size,3])
@@ -136,5 +136,5 @@ with tf.Session(config=config) as sess:
     print('Restore checkpoints from',os.path.join(ckpt_dir, 'checkpoints/chkpt-{0}'.format(num_ites)))
 
     normalized_embedding = run_embedding(sess,path_embedding_data,embedding_size)
-    path_codebook = os.path.join(path_embedding_data,'edgeLambda25' + '_codebook')
+    path_codebook = os.path.join(path_embedding_data,'codebook.npy')
     np.save(path_codebook, normalized_embedding)

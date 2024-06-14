@@ -4,6 +4,12 @@ Original implementation of the paper Yilin Wen, Hao Pan, Lei Yang and Wenping Wa
 
 This work improves the [Augmented AutoEncoder](https://github.com/DLR-RM/AugmentedAutoencoder) with a self-supervised scheme with the geometric prior imposed on the implicit orientation learning and a combination of color cue with the edge cue.
 
+### Update
+
+We fixed a bug related to the exponential moving average in the original paper, and have updated all the related results in [link](https://repository.hku.hk/handle/10722/343766) with an exponential decay weight of 0.9995. The updated results are comparable to that reported in the original [paper](https://ieeexplore.ieee.org/document/9126189), which supports the original main conclusion.
+
+Correspondingly, we have updated the code and pretrained models for this repo.
+
 ## Citiation
 If you have interest with this work, please consider citing
 ```
@@ -43,7 +49,7 @@ keras 2.2.5 (For Retina-Net)
 
 ### Pretrained Model
 
-To run the demos of our pipeline, we provide pretrained ckpt files for T-LESS obj-29 and LINEMOD obj-14, and their corresponding pose embedding \bar_C for the inference stage in the following link [[Inference Data]](https://github.com/fylwen/EEGP-AAE/releases/tag/assets-v1) (Included in the assets.zip)
+To run the demos of our pipeline, we provide pretrained ckpt files for T-LESS obj-29 and LINEMOD obj-14, and their corresponding pose embedding \bar_C for the inference stage in the following link [[Inference Data]](https://github.com/fylwen/EEGP-AAE/releases/tag/assets-v2) (Included in the assets_v2.zip)
 
 You may keep the downloaded folders under the root directory of this git repository:
 

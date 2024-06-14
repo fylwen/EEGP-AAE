@@ -129,7 +129,7 @@ class VectorQuantizer(snt.AbstractModule):
 # Build modules.
 graph_estpose=tf.Graph()
 with graph_estpose.as_default():
-    with tf.variable_scope(experiment_name):
+    with tf.variable_scope('subdiv_f18_softmax_edge'):
         I_x = tf.placeholder(tf.float32, shape=(None, image_size, image_size, 4))
         with tf.variable_scope('encoder'):
             encoder = Encoder(latent_space_size=LATENT_SPACE_SIZE,num_filters=NUM_FILTER,kernel_size=KERNEL_SIZE_ENCODER,strides=STRIDES,batch_norm=BATCH_NORM)
@@ -157,50 +157,50 @@ sess_estpose=tf.Session(graph=graph_estpose,config=config)
 print('Step 0, Load Rotation Estimation Net')
 with sess_estpose.as_default():
     with graph_estpose.as_default():
-        saver.restore(sess_estpose, '{:s}/experiments/{:s}/checkpoints_lambda250/checkpoints/chkpt-{:d}'.format(path_workspath,experiment_name,num_iterations-1))
-        arr_codebook = np.load(os.path.join(path_embedding_data,'edgeLambda250_codebook.npy'))
+        saver.restore(sess_estpose, '{:s}/experiments/{:s}/checkpoints/chkpt-{:d}'.format(path_workspath,experiment_name,num_iterations-1))
+        arr_codebook = np.load(os.path.join(path_embedding_data,'codebook.npy'))
         sess_estpose.run(embedding_assign_op, {embedding: arr_codebook.T})
 
 if use_retinanet:
-	#### Step 0: Load 2D detection network (Retina)
-	print('Step 0, Load Retina Net')
-	graph_detect=tf.Graph()
-	sess_detect=tf.Session(graph=graph_detect,config=config)
-	with sess_detect.as_default():
-	    with graph_detect.as_default():
-	        detection_model_path = './demo_data/resnet50_tless_19_inf.h5'
-	        detection_model = models.load_model(detection_model_path, backbone_name='resnet50')
+    #### Step 0: Load 2D detection network (Retina)
+    print('Step 0, Load Retina Net')
+    graph_detect=tf.Graph()
+    sess_detect=tf.Session(graph=graph_detect,config=config)
+    with sess_detect.as_default():
+        with graph_detect.as_default():
+            detection_model_path = './demo_data/resnet50_tless_19_inf.h5'
+            detection_model = models.load_model(detection_model_path, backbone_name='resnet50')
 
-	print('Step 0, Load RGB image')
-	image = cv2.imread('./demo_data/0001.png')
+    print('Step 0, Load RGB image')
+    image = cv2.imread('./demo_data/0001.png')
 
-	#### Step 1: 2D detection 
-	print('Step 1, 2D detection')
-	with sess_detect.as_default():
-	    with graph_detect.as_default():
-	        detect_image = preprocess_image(image.copy())
-	        detect_image, scale = resize_image(detect_image)
+    #### Step 1: 2D detection 
+    print('Step 1, 2D detection')
+    with sess_detect.as_default():
+        with graph_detect.as_default():
+            detect_image = preprocess_image(image.copy())
+            detect_image, scale = resize_image(detect_image)
 
-	        # process image
-	        start = time.time()
-	        boxes, scores, labels = detection_model.predict_on_batch(np.expand_dims(detect_image, axis=0))
+            # process image
+            start = time.time()
+            boxes, scores, labels = detection_model.predict_on_batch(np.expand_dims(detect_image, axis=0))
 
-	        # correct for image scale
-	        boxes /= scale
+            # correct for image scale
+            boxes /= scale
 
-	        obj_bb=None
-	        # visualize detections
-	        for box, score, label in zip(boxes[0], scores[0], labels[0]):        
-	            if score<0.:
-	            	break
-	            if label+1==obj_id:
-	            	obj_bb=np.array(box).astype(int)
-	            	obj_bb[2]-=obj_bb[0]
-	            	obj_bb[3]-=obj_bb[1]
-	            	break
-	if obj_bb is None:
-	    print('No valid detection')
-	    exit(0)
+            obj_bb=None
+            # visualize detections
+            for box, score, label in zip(boxes[0], scores[0], labels[0]):        
+                if score<0.:
+                    break
+                if label+1==obj_id:
+                    obj_bb=np.array(box).astype(int)
+                    obj_bb[2]-=obj_bb[0]
+                    obj_bb[3]-=obj_bb[1]
+                    break
+    if obj_bb is None:
+        print('No valid detection')
+        exit(0)
 
 
 else:
@@ -310,11 +310,10 @@ with open(path_result, 'w') as f:
 
 '''
 Expected result:
-Estimated rotation:
-[[ 0.86691886 -0.00222524  0.4984443 ]
- [ 0.49393854  0.13806163 -0.8584659 ]
- [-0.06690574  0.9904211   0.12078737]]
-Estimated translation:
-[[ 45.84993 -40.99217 748.031  ]]
-
+Estimated rotation - model2cam, 3x3 rotation matrix:
+[[ 0.7742066   0.02164241  0.6325628 ]
+ [ 0.60781056  0.2533565  -0.7525801 ]
+ [-0.17655154  0.96713084  0.18299578]]
+Estimated translation - model2cam, in mm:
+[[ 47.517986 -43.182755 775.24493 ]]
 '''

@@ -85,7 +85,7 @@ class Decoder(snt.AbstractModule):
         z=latent_code
         h, w, c = self._reconstruction_shape[0:3]
         print(h,w,c)
-        layer_dimensions = [ [h//np.prod(self._strides[i:]), w//np.prod(self._strides[i:])]  for i in range(0,len(self._strides))]#py2 to py3
+        layer_dimensions = [ [h//np.prod(self._strides[i:]), w//np.prod(self._strides[i:])]  for i in range(0,len(self._strides))]
         print(layer_dimensions)
 
         if c!=1:
@@ -255,7 +255,7 @@ class VectorQuantizerEMA(base.AbstractModule):
         with self._enter_variable_scope():
           initializer = tf.random_normal_initializer()
           self._w = tf.get_variable('embedding', [embedding_dim, num_embeddings],initializer=initializer, use_resource=True)
-          self._ema_cluster_size = tf.get_variable('ema_cluster_size', [num_embeddings],initializer=tf.constant_initializer(0), use_resource=True)
+          self._ema_cluster_size = tf.get_variable('ema_cluster_size', [num_embeddings],initializer=tf.constant_initializer(1), use_resource=True)#0
           self._ema_w = tf.get_variable('ema_dw', initializer=self._w.initialized_value(), use_resource=True)
 
     def _build(self, inputs, decay=0.99, temperature=0.07, encoding_1nn_indices=None, encodings=None, mask_roi=None, is_training=False):
@@ -298,18 +298,17 @@ class VectorQuantizerEMA(base.AbstractModule):
         e_loss=tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=tf.stop_gradient(flat_encodings),logits=e_multiply))
 
         if is_training:#w,dw [128,8020], input batch [64,128]
-            updated_ema_cluster_size = moving_averages.assign_moving_average(self._ema_cluster_size, tf.reduce_sum(encodings, 0), decay)
+            updated_ema_cluster_size = moving_averages.assign_moving_average(self._ema_cluster_size, tf.reduce_sum(encodings, 0), decay,zero_debias=False)
             print('Dw shape',normalized_inputs.shape,'Encoding shape',encodings.shape)
             dw = tf.matmul(normalized_inputs, encodings, transpose_a=True)
-            updated_ema_w = moving_averages.assign_moving_average(self._ema_w, dw, decay)
+            updated_ema_w = moving_averages.assign_moving_average(self._ema_w, dw, decay,zero_debias=False)
             n = tf.reduce_sum(updated_ema_cluster_size)
-            updated_ema_cluster_size = ((updated_ema_cluster_size + self._epsilon) / (n + self._num_embeddings * self._epsilon) * n)
 
             normalised_updated_ema_w = (updated_ema_w / tf.reshape(updated_ema_cluster_size, [1, -1]))
             with tf.control_dependencies([e_loss]):
                 update_w = tf.assign(self._w, normalised_updated_ema_w)
                 with tf.control_dependencies([update_w]):
-                    loss = e_loss
+                    loss = tf.identity(e_loss)
         else:
             loss = e_loss
         avg_probs = tf.reduce_mean(encodings, 0)

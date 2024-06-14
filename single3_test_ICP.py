@@ -128,7 +128,7 @@ class VectorQuantizer(snt.AbstractModule):
 # Build modules.
 graph_estpose=tf.Graph()
 with graph_estpose.as_default():
-    with tf.variable_scope(experiment_name):  # .split('_')[0]+'_'+experiment_name.split('_')[1]):
+    with tf.variable_scope('subdiv_f18_softmax_edge'):  # .split('_')[0]+'_'+experiment_name.split('_')[1]):
         I_x = tf.placeholder(tf.float32, shape=(None, image_size, image_size, 4))
         with tf.variable_scope('encoder'):
             encoder = Encoder(latent_space_size=LATENT_SPACE_SIZE,num_filters=NUM_FILTER,kernel_size=KERNEL_SIZE_ENCODER,strides=STRIDES,batch_norm=BATCH_NORM)
@@ -156,8 +156,8 @@ sess_estpose=tf.Session(graph=graph_estpose,config=config)
 print('Step 0, Load Rotation Estimation Net')
 with sess_estpose.as_default():
     with graph_estpose.as_default():
-        saver.restore(sess_estpose, '{:s}/experiments/{:s}/checkpoints_lambda250/checkpoints/chkpt-{:d}'.format(path_workspath,experiment_name,num_iterations-1))
-        arr_codebook = np.load(os.path.join(path_embedding_data,'edgeLambda250_codebook.npy'))
+        saver.restore(sess_estpose, '{:s}/experiments/{:s}/checkpoints/chkpt-{:d}'.format(path_workspath,experiment_name,num_iterations-1))
+        arr_codebook = np.load(os.path.join(path_embedding_data,'codebook.npy'))
         sess_estpose.run(embedding_assign_op, {embedding: arr_codebook.T})
 
 
@@ -249,7 +249,7 @@ with sess_estpose.as_default():
         est_rot=rectify_rot(est_rot_cb,est_tra)
 
         #Further icp refinement for rotation and translation
-        if False:
+        if True:
             est_rot,est_tra,_= rotation_error_icp(img_depth, model_o3d,  obj_bb, est_rot, est_tra.flatten(),K_test.copy(),
                                                 width=W, height=H, max_mean_dist=max_mean_dist,
                                                 max_mean_dist_factor=max_mean_dist_factor,
@@ -275,9 +275,18 @@ with open(path_result, 'w') as f:
 '''
 Expected result:
 if refine for both rotation and translation:
-est_rot: [-0.20446137, 0.94286263, -0.26306966, 0.85182256, 0.03896938, -0.52237886, -0.48227987, -0.33089498, -0.81111938], 
-est_tra: [90.49808699, -137.58854774, 849.52665827]
+Estimated rotation - model2cam, 3x3 rotation matrix:
+[[-0.20446165  0.94286203 -0.2630716 ]
+ [ 0.8518224   0.03896845 -0.5223793 ]
+ [-0.48228008 -0.3308968  -0.81111854]]
+Estimated translation - model2cam, in mm:
+[[  90.498184 -137.58853   849.5266  ]]
+
 if refine only z-direction
-est_rot: [-0.15618885, 0.96754020, -0.19867308, 0.86759037, 0.03824597, -0.49580660, -0.47211438, -0.24980631, -0.84540218], 
-est_tra: [85.44441029, -146.03545470, 840.30747686]
+Estimated rotation - model2cam, 3x3 rotation matrix:
+[[-0.13168855  0.9423648  -0.30758202]
+ [ 0.8762383  -0.03443211 -0.4806463 ]
+ [-0.4635349  -0.33281076 -0.8212018 ]]
+Estimated translation - model2cam, in mm:
+[[  82.34582 -145.22218  833.0852 ]]
 '''

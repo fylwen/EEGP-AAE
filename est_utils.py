@@ -172,7 +172,7 @@ def rectify_rot(init_rot, est_tra):
 
 ################################################################################################################
 def pose_estimation_img_detection(sess, x, pose_retrieved, img_bgr, img_depth, info_dets, info_scene,
-                                  codebook_rotation_matrix, codebook_obj_bbs, embed_obj_ids, image_size,
+                                  codebook_rotation_matrix, codebook_obj_bbs, model_id, image_size,
                                   model_reconst=None, model_o3d=None, use_icp='none', est_err=False,
                                   is_vis=True, path_vis_prefix='./output',dataset_name='hinterstoisser'):
 
@@ -208,7 +208,7 @@ def pose_estimation_img_detection(sess, x, pose_retrieved, img_bgr, img_depth, i
         cur_info_pose_est['summary_ests'] = []
 
         # Store and Visualize the Most-Fit pose template retrieved by AAE
-        if est_err:
+        if use_icp=='GT':
             print('w_gt2d')
             cur_info_pose_est['score'] = cur_info_pose_est['visib_portion']
 
@@ -234,8 +234,8 @@ def pose_estimation_img_detection(sess, x, pose_retrieved, img_bgr, img_depth, i
         center_obj_x_train = render_bb[0] + render_bb[2] / 2. - K_train[0, 2]
         center_obj_y_train = render_bb[1] + render_bb[3] / 2. - K_train[1, 2]
 
-        center_obj_x_test = est_bb[0] + est_bb[2] // 2 - K_test[0, 2]
-        center_obj_y_test = est_bb[1] + est_bb[3] // 2 - K_test[1, 2]
+        center_obj_x_test = est_bb[0] + est_bb[2] / 2 - K_test[0, 2]
+        center_obj_y_test = est_bb[1] + est_bb[3] / 2 - K_test[1, 2]
 
 
         cur_info_pose_est['est_tra'] = est_tra_w_tz(mm_tz,Radius_render_train,K_test,center_obj_x_test,center_obj_y_test,
@@ -243,7 +243,7 @@ def pose_estimation_img_detection(sess, x, pose_retrieved, img_bgr, img_depth, i
         cur_info_pose_est['est_rot']=rectify_rot(cur_info_pose_est['est_rot_cb'],cur_info_pose_est['est_tra'])
 
         max_mean_dist_factor=2.0
-        if use_icp!='none':
+        if use_icp in ['refine_z','refine_all']:
             mm_tz,max_mean_dist=depth_refinement(test_depth_crops[0][id_box], model_reconst,cur_info_pose_est['est_rot'],
                                     cur_info_pose_est['est_tra'].flatten(), K_test, (W, H), max_mean_dist_factor=max_mean_dist_factor)#5.0)
 
@@ -295,9 +295,7 @@ def pose_estimation_img_detection(sess, x, pose_retrieved, img_bgr, img_depth, i
             print('vsd  ', cur_info_pose_est['vsd_err'], cur_info_pose_est['vsd_correct'])
 
 
-        if is_vis:#
-            model_id=embed_obj_ids[idx//92232]
-            idx=idx%92232
+        if is_vis:#            
             ttag = ''
             if dataset_name=='hinterstoisser':
                 mpath_cb_imgs = '../Edge-Network/embedding92232sline/{:02d}/imgs/{:05d}.png'
